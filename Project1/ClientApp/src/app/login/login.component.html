@@ -1,0 +1,17 @@
+<form #loginForm="ngForm" (ngSubmit) ="login(loginForm)">
+  <div>
+    <h2>Login</h2>
+    <div *ngIf="invalidLogin" class="alert alert-danger">
+      Invalid user credentials
+    </div>
+    <br />
+    <label for="userName">User Name</label>
+    <input type="text" id="userName" name="UserName" autofocus ngModel class="from-control required" />
+    <br />
+    <label for="password">Password</label>
+    <input type="text" id="password" name="Password" autofocus ngModel class="from-control required" />
+    <br />
+    <button class="btn-primary btn-lg btn-primary btn-block" type="Submit">Sign in</button>
+    <br />
+  </div>
+</form>
