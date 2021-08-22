@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BusinessLayer.Models;
+using BusinessLayer.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project1.Models;
@@ -13,6 +15,11 @@ namespace Project1.Controllers
     [ApiController]
     public class PrivateDataController : ControllerBase
     {
+        private readonly IUserService _userService;
+        public PrivateDataController(IUserService userService)
+        {
+            _userService = userService;
+        }
         [HttpGet]
         [Authorize]
         public IEnumerable<string> Get()
@@ -43,7 +50,13 @@ namespace Project1.Controllers
             return result;
         }
 
-
+        [HttpGet]
+        [Route("get-users")]
+        [Authorize]
+        public List<User> GetAllUsers()
+        {
+            return _userService.GetAll();
+        }
 
     }
 }

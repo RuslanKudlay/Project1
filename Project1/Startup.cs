@@ -8,6 +8,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using DataAccessLayer;
+using Microsoft.EntityFrameworkCore;
+using BusinessLayer.UserService;
+using System.Linq;
+using DataAccessLayer.Entities;
 
 namespace Project1
 {
@@ -23,6 +28,12 @@ namespace Project1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationDbContext>(option =>
+            {
+            option.UseSqlServer(Configuration["SqlServerConnectionString"],
+            b => b.MigrationsAssembly("DataAccessLayer"));
+            });
+
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,7 +51,8 @@ namespace Project1
                };
            });
 
-
+            services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
@@ -74,6 +86,7 @@ namespace Project1
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            SeedDefaultUsers(app);
 
             app.UseEndpoints(endpoints =>
             {
@@ -95,5 +108,34 @@ namespace Project1
                 }
             });
         }
+    
+        public void SeedDefaultUsers(IApplicationBuilder app)
+        {
+            var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                if(dbContext.Users.FirstOrDefault(u => u.firstName == "John") == null)
+                {
+                    User johndoe = new User
+                    {
+                        firstName = "john",
+                        lastName = "doe"
+                    };
+                    User andrey = new User
+                    {
+                        firstName = "and",
+                        lastName = "rey"
+                    };
+
+                    dbContext.Users.Add(johndoe);
+                    dbContext.Users.Add(andrey);
+                    dbContext.SaveChanges();
+                }
+            }
+        }
+    
     }
 }
