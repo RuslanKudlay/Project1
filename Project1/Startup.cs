@@ -86,7 +86,7 @@ namespace Project1
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            SeedDefaultUsers(app);
+            SeedDefaultData(app);
 
             app.UseEndpoints(endpoints =>
             {
@@ -109,7 +109,7 @@ namespace Project1
             });
         }
     
-        public void SeedDefaultUsers(IApplicationBuilder app)
+        public void SeedDefaultData(IApplicationBuilder app)
         {
             var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
 
@@ -134,6 +134,80 @@ namespace Project1
                     dbContext.Users.Add(andrey);
                     dbContext.SaveChanges();
                 }
+                if (dbContext.ComputerManufactyrers.FirstOrDefault() == null)
+                {
+                    var computerManufactyrerOne = new ComputerManufactyrer
+                    {
+                        ManufactyrerName = "Aser"
+                    };
+                    var computerManufactyrerTwo = new ComputerManufactyrer
+                    {
+                        ManufactyrerName = "Toshiba"
+                    };
+                    dbContext.AddRange(computerManufactyrerOne, computerManufactyrerTwo);
+                    dbContext.SaveChanges();
+
+                    var computerModelAserOne = new ComtuperModel
+                    {
+                        ModelName = "A1",
+                        ComputerManufactyrerId = computerManufactyrerOne.Id
+
+                    };
+                    var computerModelAserTwo = new ComtuperModel
+                    {
+                        ModelName = "A2",
+                        ComputerManufactyrerId = computerManufactyrerOne.Id
+
+                    };
+                    var computerModelToshibaOne = new ComtuperModel
+                    {
+                        ModelName = "Rapid",
+                        ComputerManufactyrerId = computerManufactyrerTwo.Id
+
+                    };
+                    var computerModelToshibaTwo = new ComtuperModel
+                    {
+                        ModelName = "More fast",
+                        ComputerManufactyrerId = computerManufactyrerTwo.Id
+                    };
+
+                    dbContext.AddRange(computerModelAserOne, computerModelAserTwo, computerModelToshibaOne, computerModelToshibaTwo);
+                    dbContext.SaveChanges();
+
+                    //var asersTagOne = new ComputerModelTag
+                    //{
+                    //    TagName = "asersTagOne",
+                    //    TagMeta = "asersTagOne_Meta",
+                    //    TagExpiration = "4/6/2021",
+                    //    ComputerModelId = computerModelAserOne.Id
+                    //};
+                    //var asersTagTwo = new ComputerModelTag
+                    //{
+                    //    TagName = "asersTagTwo",
+                    //    TagMeta = "asersTagTwo_Meta",
+                    //    TagExpiration = "4/18/2021",
+                    //    ComputerModelId = computerModelAserOne.Id
+                    //};
+                    //var asersTagThree = new ComputerModelTag
+                    //{
+                    //    TagName = "asersTagThree",
+                    //    TagMeta = "asersTagThree_Meta",
+                    //    TagExpiration = "4/24/2021",
+                    //    ComputerModelId = computerModelAserOne.Id
+                    //};
+                    //var asersTagFour = new ComputerModelTag
+                    //{
+                    //    TagName = "asersTagFour",
+                    //    TagMeta = "asersTagFour_Meta",
+                    //    TagExpiration = "4/30/2021",
+                    //    ComputerModelId = computerModelAserOne.Id
+                    //};
+
+                    //dbContext.AddRange(asersTagOne, asersTagTwo, asersTagThree, asersTagFour);
+                    //dbContext.SaveChanges();
+                }
+
+                var compModelsTagsExpanded = dbContext.ComputerModelTags.ToList();
             }
         }
     
