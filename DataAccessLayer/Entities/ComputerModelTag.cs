@@ -9,9 +9,9 @@ namespace DataAccessLayer.Entities
     public class ComputerModelTag
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string TagInfo { get; set; }
-        public int ComputerModelId { get; set; } 
+        public string ComputerModelId { get; set; } 
         public SalesInfo SalesInfo { get; set; }
         public ComtuperModel ComputerModel { get; set; }
     }

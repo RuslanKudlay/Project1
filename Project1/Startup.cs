@@ -13,14 +13,15 @@ using Microsoft.EntityFrameworkCore;
 using BusinessLayer.UserService;
 using System.Linq;
 using DataAccessLayer.Entities;
+using Microsoft.OpenApi.Models;
 
 namespace Project1
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            Configuration = configuration;
+            Configuration = new ConfigurationBuilder().AddJsonFile($"appsettings.{environment.EnvironmentName}.json").Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -54,6 +55,12 @@ namespace Project1
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
             services.AddScoped<IUserService, UserService>();
 
+            services.AddSwaggerGen(sw =>
+            {
+                sw.SwaggerDoc("v1", new OpenApiInfo {Title = "Swagger", Version = "version 1"});
+            
+            });
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -68,6 +75,12 @@ namespace Project1
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseSwagger();
+                app.UseSwaggerUI(sw =>
+                {
+                    sw.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1");
+                });
             }
             else
             {
@@ -117,7 +130,7 @@ namespace Project1
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                if(dbContext.Users.FirstOrDefault(u => u.firstName == "John") == null)
+                if (dbContext.Users.FirstOrDefault(u => u.firstName == "John") == null)
                 {
                     User johndoe = new User
                     {

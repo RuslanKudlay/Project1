@@ -2,7 +2,7 @@
 
 namespace DataAccessLayer.Migrations
 {
-    public partial class AddedComputerManufactyrerAndComputerModelTagAndComputerModel : Migration
+    public partial class AddedAllModelsInOneMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -10,8 +10,7 @@ namespace DataAccessLayer.Migrations
                 name: "ComputerManufactyrers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ManufactyrerName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -20,13 +19,25 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    firstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    lastName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ComtuperModels",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ModelName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ComputerManufactyrerId = table.Column<int>(type: "int", nullable: false)
+                    ComputerManufactyrerId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -36,19 +47,19 @@ namespace DataAccessLayer.Migrations
                         column: x => x.ComputerManufactyrerId,
                         principalTable: "ComputerManufactyrers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ComputerModelTags",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TagName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TagMeta = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TagExpiration = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ComputerModelId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TagInfo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ComputerModelId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SalesInfo_SalesDepartment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SalesInfo_DepartmentLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SalesInfo_DepartmentZipCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -58,7 +69,7 @@ namespace DataAccessLayer.Migrations
                         column: x => x.ComputerModelId,
                         principalTable: "ComtuperModels",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -76,6 +87,9 @@ namespace DataAccessLayer.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ComputerModelTags");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "ComtuperModels");

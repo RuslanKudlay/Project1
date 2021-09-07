@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210906135306_AddedComputerManufactyrerAndComputerModelTagAndComputerModel")]
-    partial class AddedComputerManufactyrerAndComputerModelTagAndComputerModel
+    [Migration("20210907103326_AddedAllModelsInOneMigration")]
+    partial class AddedAllModelsInOneMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,10 +22,9 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Entities.ComputerManufactyrer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ManufactyrerName")
                         .HasColumnType("nvarchar(max)");
@@ -37,21 +36,14 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Entities.ComputerModelTag", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ComputerModelId")
-                        .HasColumnType("int");
+                    b.Property<string>("ComputerModelId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("TagExpiration")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TagMeta")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TagName")
+                    b.Property<string>("TagInfo")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -63,13 +55,12 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Entities.ComtuperModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ComputerManufactyrerId")
-                        .HasColumnType("int");
+                    b.Property<string>("ComputerManufactyrerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ModelName")
                         .HasColumnType("nvarchar(max)");
@@ -83,10 +74,9 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("firstName")
                         .HasColumnType("nvarchar(max)");
@@ -103,20 +93,40 @@ namespace DataAccessLayer.Migrations
                 {
                     b.HasOne("DataAccessLayer.Entities.ComtuperModel", "ComputerModel")
                         .WithMany("ComputerModelTag")
-                        .HasForeignKey("ComputerModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ComputerModelId");
+
+                    b.OwnsOne("DataAccessLayer.Entities.SalesInfo", "SalesInfo", b1 =>
+                        {
+                            b1.Property<string>("ComputerModelTagId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<string>("DepartmentLocation")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("DepartmentZipCode")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("SalesDepartment")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ComputerModelTagId");
+
+                            b1.ToTable("ComputerModelTags");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComputerModelTagId");
+                        });
 
                     b.Navigation("ComputerModel");
+
+                    b.Navigation("SalesInfo");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.ComtuperModel", b =>
                 {
                     b.HasOne("DataAccessLayer.Entities.ComputerManufactyrer", "ComputerManufactyrer")
                         .WithMany("ComtuperModels")
-                        .HasForeignKey("ComputerManufactyrerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ComputerManufactyrerId");
 
                     b.Navigation("ComputerManufactyrer");
                 });
