@@ -14,6 +14,7 @@ using BusinessLayer.UserService;
 using System.Linq;
 using DataAccessLayer.Entities;
 using Microsoft.OpenApi.Models;
+using BusinessLayer.ComputerService;
 
 namespace Project1
 {
@@ -54,6 +55,7 @@ namespace Project1
 
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IComputerService, ComputerService>();
 
             services.AddSwaggerGen(sw =>
             {
