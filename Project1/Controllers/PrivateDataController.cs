@@ -1,8 +1,11 @@
-﻿using BusinessLayer.Models;
+﻿using BusinessLayer.ComputerService;
+using BusinessLayer.Models;
 using BusinessLayer.UserService;
+using DataAccessLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Project1.Models;
 using System;
 using System.Collections.Generic;
@@ -15,10 +18,12 @@ namespace Project1.Controllers
     [ApiController]
     public class PrivateDataController : ControllerBase
     {
+        private readonly IComputerService _computerService;
         private readonly IUserService _userService;
-        public PrivateDataController(IUserService userService)
+        public PrivateDataController(IUserService userService, IComputerService computerService)
         {
             _userService = userService;
+            _computerService = computerService;
         }
         [HttpGet]
         [Authorize]
@@ -52,9 +57,10 @@ namespace Project1.Controllers
 
         [HttpGet]
         [Route("get-users")]
-        [Authorize]
+        //[Authorize]
         public List<User> GetAllUsers()
         {
+            var manufactyrer = _computerService.GetComputerManufactyrers();
             return _userService.GetAll();
         }
 

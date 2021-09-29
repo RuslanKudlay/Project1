@@ -15,6 +15,8 @@ using System.Linq;
 using DataAccessLayer.Entities;
 using Microsoft.OpenApi.Models;
 using BusinessLayer.ComputerService;
+using Microsoft.Extensions.Logging;
+using BusinessLayer.Lifecycle;
 
 namespace Project1
 {
@@ -52,10 +54,18 @@ namespace Project1
                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
                };
            });
+            var serviceProvider = services.BuildServiceProvider();
+            var logger = serviceProvider.GetService<ILogger<object>>();
+            services.AddSingleton(typeof(ILogger), logger);
+            
 
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IComputerService, ComputerService>();
+            services.AddScoped<IComputerService, AdvancedComputerService>();
+
+            services.AddScoped<IScopedInterface, LifecycleService>();
+            services.AddSingleton<ISingletonInterface, LifecycleService>();
+            services.AddTransient<ITransientInterface, LifecycleService>();
 
             services.AddSwaggerGen(sw =>
             {

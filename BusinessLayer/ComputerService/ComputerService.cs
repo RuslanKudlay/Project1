@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Models;
+﻿using AutoMapper;
+using BusinessLayer.Models;
 using DataAccessLayer;
 using DataAccessLayer.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,20 @@ namespace BusinessLayer.ComputerService
     public class ComputerService : IComputerService
     {
         private readonly IApplicationDbContext _dbContext;
+        private readonly Mapper _autoMapper;
         public ComputerService(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
+            var mapperConfig = new MapperConfiguration(_ =>
+            {
+                _.CreateMap<ComputerManufactyrer, ComputerManufactyrerDto>()
+                .ForMember(_ => _.ComputerModels, _ => _.MapFrom
+                (_ => _.ComtuperModels.Select(_ => new ComputerModelDto
+                {
+                    ModelName = _.ModelName
+                })));
+            });
+            _autoMapper = new Mapper(mapperConfig);
         }
         public string AddManufactyrer(ComputerManufactyrerDto computerManufactyrer)
         {
